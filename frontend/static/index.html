@@ -97,24 +97,35 @@
     transform: scale(1.05);
   }
   .lang-select {
-    background: rgba(255,255,255,0.22);
-    border: 1px solid rgba(255,255,255,0.35);
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.35rem 0.6rem;
-    border-radius: 12px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.8);
     cursor: pointer;
     outline: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     transition: all 0.2s ease;
   }
+  .lang-select:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
   .lang-select option {
-    background: #0f172a;
-    color: #f8fafc;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
   }
   body.dark-mode .lang-select {
-    background: rgba(0,0,0,0.3);
-    border-color: rgba(255,255,255,0.25);
+    background: #1e293b;
+    color: #f8fafc;
+    border-color: var(--accent);
+  }
+  body.dark-mode .lang-select option {
+    background: #1e293b;
+    color: #f8fafc;
   }
   .typing-dots {
     display: inline-flex;
@@ -345,11 +356,14 @@
       <div id="header-title">AI Fitness & Athletic Coach</div>
     </div>
   </div>
-  <div style="display:flex; align-items:center; gap:0.6rem;">
-    <select id="lang-select" class="lang-select" title="Change Language / Alterar Idioma">
-      <option value="en">🇺🇸 English</option>
-      <option value="pt-BR">🇧🇷 Português (BR)</option>
-    </select>
+  <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; justify-content:flex-end;">
+    <div style="display:flex; align-items:center; gap:0.3rem;">
+      <span style="font-size:1.1rem;" title="Language / Idioma">🌐</span>
+      <select id="lang-select" class="lang-select" title="Change Language / Alterar Idioma">
+        <option value="en">🇺🇸 English</option>
+        <option value="pt-BR">🇧🇷 Português (BR)</option>
+      </select>
+    </div>
     <div class="status-badge">
       <span class="status-dot"></span> <span id="status-text">Online</span>
     </div>

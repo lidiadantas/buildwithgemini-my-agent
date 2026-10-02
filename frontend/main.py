@@ -30,7 +30,7 @@ from a2a.types import (
     TransportProtocol,
 )
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 # Try loading default AGENT_ENGINE_RESOURCE_NAME from deployment_metadata.json if available
@@ -267,7 +267,16 @@ async def chat(req: Request):
 
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
-# Serve the chat UI (keep this mount last so /chat wins).
+
+@app.get("/")
+async def get_index():
+    index_path = os.path.join(STATIC_DIR, "index.html")
+    return FileResponse(
+        index_path,
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+    )
+
+# Serve the chat UI (keep this mount last so /chat and / win).
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
 
 
