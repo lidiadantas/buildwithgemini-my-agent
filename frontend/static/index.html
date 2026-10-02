@@ -16,6 +16,8 @@
     --accent-light: #ccfbf1;
     --accent-gradient: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
     --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --bubble-agent-bg: #ffffff;
     --border: #e2e8f0;
     --text-primary: #0f172a;
     --text-muted: #64748b;
@@ -24,6 +26,8 @@
   }
   body.dark-mode {
     --bg: #0f172a;
+    --card-bg: #1e293b;
+    --bubble-agent-bg: #1e293b;
     --border: #334155;
     --text-primary: #f8fafc;
     --text-muted: #94a3b8;
@@ -33,6 +37,11 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
   body.dark-mode .bubble {
+    background: #1e293b;
+    color: #f8fafc;
+    border-color: #334155;
+  }
+  body.dark-mode .msg.agent .bubble {
     background: #1e293b;
     color: #f8fafc;
     border-color: #334155;
@@ -51,8 +60,8 @@
     border-color: #334155;
   }
   body.dark-mode .prompt-chip {
-    background: #064e3b;
-    border-color: #047857;
+    background: #1e293b;
+    border-color: #334155;
     color: #a7f3d0;
   }
   body.dark-mode .prompt-chip:hover {
@@ -64,7 +73,7 @@
     border-color: #334155;
     color: #f8fafc;
   }
-  body.dark-mode .a2text.a2-h1, body.dark-mode .a2text.a2-h2, body.dark-mode .a2text.a2-h3, body.dark-mode .a2text.a2-h4 {
+  body.dark-mode .a2text, body.dark-mode .a2text.a2-h1, body.dark-mode .a2text.a2-h2, body.dark-mode .a2text.a2-h3, body.dark-mode .a2text.a2-h4 {
     color: #f8fafc;
   }
   body.dark-mode .a2text.a2-caption {
