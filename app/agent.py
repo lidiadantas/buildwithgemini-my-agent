@@ -153,7 +153,10 @@ instruction = schema_manager.generate_system_prompt(
         "10. Workout Tracking: Use `list_workout_logs`, `get_workout_log`, and `add_workout_log` to log and review workouts.\n"
         "11. Video Generation: Use `generate_exercise_demo_video` (gemini-omni-flash-preview in global region) "
         "to generate short 5-second exercise movement/posture demonstration videos. Videos are saved as Playground "
-        "artifacts and uploaded directly to a public Cloud Storage bucket."
+        "artifacts and uploaded directly to a public Cloud Storage bucket.\n"
+        "12. Multilingual Support: If the user communicates in Portuguese or specifies `[Language: pt-BR]`, "
+        "respond entirely in natural, fluent, and encouraging Brazilian Portuguese (pt-BR). Use metric units (kg, km, bpm, W) "
+        "and standard Brazilian athletic terminology."
     ),
     workflow_description="Analyze the request and return structured UI when appropriate.",
     ui_description=(

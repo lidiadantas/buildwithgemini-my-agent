@@ -96,6 +96,26 @@
     background: rgba(255,255,255,0.3);
     transform: scale(1.05);
   }
+  .lang-select {
+    background: rgba(255,255,255,0.22);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35rem 0.6rem;
+    border-radius: 12px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .lang-select option {
+    background: #0f172a;
+    color: #f8fafc;
+  }
+  body.dark-mode .lang-select {
+    background: rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.25);
+  }
   .typing-dots {
     display: inline-flex;
     align-items: center;
@@ -322,25 +342,29 @@
   <div class="header-brand">
     <span class="header-icon">🏋️</span>
     <div>
-      <div>AI Fitness & Athletic Coach</div>
+      <div id="header-title">AI Fitness & Athletic Coach</div>
     </div>
   </div>
-  <div style="display:flex; align-items:center; gap:0.75rem;">
+  <div style="display:flex; align-items:center; gap:0.6rem;">
+    <select id="lang-select" class="lang-select" title="Change Language / Alterar Idioma">
+      <option value="en">🇺🇸 English</option>
+      <option value="pt-BR">🇧🇷 Português (BR)</option>
+    </select>
     <div class="status-badge">
-      <span class="status-dot"></span> Online
+      <span class="status-dot"></span> <span id="status-text">Online</span>
     </div>
     <button type="button" id="theme-toggle" class="theme-toggle-btn" title="Toggle Dark/Light Mode">🌙</button>
   </div>
 </header>
 <div id="log"></div>
 <div class="prompts-container">
-  <button type="button" class="prompt-chip" onclick="sendPrompt(this.innerText)">💪 Assess body fat & heart rate zones</button>
-  <button type="button" class="prompt-chip" onclick="sendPrompt(this.innerText)">⛅ Outdoor workout weather & plan</button>
-  <button type="button" class="prompt-chip" onclick="sendPrompt(this.innerText)">🏋️ Find nearby gyms & exercise demo</button>
+  <button type="button" id="chip1" class="prompt-chip">💪 Assess body fat & heart rate zones</button>
+  <button type="button" id="chip2" class="prompt-chip">⛅ Outdoor workout weather & plan</button>
+  <button type="button" id="chip3" class="prompt-chip">🏋️ Find nearby gyms & exercise demo</button>
 </div>
 <form id="form">
   <input id="input" placeholder="Ask your coach anything..." autocomplete="off" autofocus>
-  <button type="submit">
+  <button type="submit" id="send-btn">
     Send
   </button>
 </form>
@@ -364,19 +388,7 @@ function bubble(who) {
   return b;
 }
 
-// Render initial greeting message
-const welcomeBubble = bubble("agent");
-welcomeBubble.textContent = `👋 Welcome to your AI Fitness & Athletic Coach!
-
-Here is what I can help you with:
-• Bioimpedance & Physical Assessment: Evaluate body fat %, muscle mass, and BMR to prevent injuries.
-• Personalized Workout Plans: Calculate heart rate training zones & build custom weekly routines.
-• Outdoor Weather Check: Get real-time weather & athletic advice before outdoor training.
-• Nearby Gyms & Fitness Spots: Locate nearby fitness centers, parks, or tracks with Google Maps.
-• Visual Exercise Demos: Generate AI workout images and posture guides.
-• Profile & Progress Tracking: Save your fitness goals and track workout logs.
-
-How can I assist your training today?`;
+let welcomeBubble = null;
 
 /* ----------------------------------------------------------------------------
  * A2UI mini-renderer (v0.8 Basic Catalog subset).
@@ -509,6 +521,92 @@ function renderReply(b, parts) {
   log.scrollTop = log.scrollHeight;
 }
 
+// Language translations (English / Português BR)
+const translations = {
+  "en": {
+    title: "AI Fitness & Athletic Coach",
+    status: "Online",
+    chip1Label: "💪 Assess body fat & heart rate zones",
+    chip2Label: "⛅ Outdoor workout weather & plan",
+    chip3Label: "🏋️ Find nearby gyms & exercise demo",
+    chip1Prompt: "Assess my body fat percentage and calculate my Karvonen heart rate zones for resting HR 55 bpm and max HR 185 bpm.",
+    chip2Prompt: "What is the outdoor workout weather in São Paulo right now and give me a running plan?",
+    chip3Prompt: "Find nearby gyms in São Paulo and generate a short exercise demo video.",
+    placeholder: "Ask your coach anything...",
+    send: "Send",
+    welcome: "👋 Hello! I am your AI Fitness & Athletic Coach. How can I help you today? Try one of the example prompts above!",
+    noResponse: "(no response)"
+  },
+  "pt-BR": {
+    title: "Treinador de Fitness e Atletismo com IA",
+    status: "Online",
+    chip1Label: "💪 Avaliar gordura e zonas de FC",
+    chip2Label: "⛅ Clima e treino ao ar livre",
+    chip3Label: "🏋️ Academias e demonstração",
+    chip1Prompt: "Avalie meu percentual de gordura corporal e calcule minhas zonas de frequência cardíaca Karvonen para FC de repouso 55 bpm e FC máxima 185 bpm.",
+    chip2Prompt: "Qual é o clima para treino ao ar livre em São Paulo agora e me dê um plano de corrida?",
+    chip3Prompt: "Encontre academias próximas em São Paulo e gere um vídeo curto de demonstração de exercício.",
+    placeholder: "Pergunte qualquer coisa ao seu treinador...",
+    send: "Enviar",
+    welcome: "👋 Olá! Sou seu Treinador de Fitness e Atletismo com IA. Como posso ajudar você hoje? Experimente uma das sugestões acima!",
+    noResponse: "(sem resposta)"
+  }
+};
+
+let currentLang = localStorage.getItem("lang") || "en";
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("lang", lang);
+  const select = document.getElementById("lang-select");
+  if (select) select.value = lang;
+  const t = translations[lang] || translations["en"];
+
+  const hTitle = document.getElementById("header-title");
+  if (hTitle) hTitle.textContent = t.title;
+
+  const sText = document.getElementById("status-text");
+  if (sText) sText.textContent = t.status;
+
+  const inp = document.getElementById("input");
+  if (inp) inp.placeholder = t.placeholder;
+
+  const btn = document.getElementById("send-btn");
+  if (btn) btn.textContent = t.send;
+
+  const c1 = document.getElementById("chip1");
+  if (c1) {
+    c1.textContent = t.chip1Label;
+    c1.onclick = () => sendPrompt(t.chip1Prompt);
+  }
+  const c2 = document.getElementById("chip2");
+  if (c2) {
+    c2.textContent = t.chip2Label;
+    c2.onclick = () => sendPrompt(t.chip2Prompt);
+  }
+  const c3 = document.getElementById("chip3");
+  if (c3) {
+    c3.textContent = t.chip3Label;
+    c3.onclick = () => sendPrompt(t.chip3Prompt);
+  }
+
+  if (!welcomeBubble && log.children.length === 0) {
+    welcomeBubble = bubble("agent");
+    welcomeBubble.textContent = t.welcome;
+  } else if (welcomeBubble && log.children.length === 1 && log.contains(welcomeBubble)) {
+    welcomeBubble.textContent = t.welcome;
+  }
+}
+
+window.applyLanguage = applyLanguage;
+window.sendPrompt = sendPrompt;
+
+const langSelect = document.getElementById("lang-select");
+if (langSelect) {
+  langSelect.addEventListener("change", (e) => applyLanguage(e.target.value));
+  langSelect.onchange = (e) => applyLanguage(e.target.value);
+}
+
 // Dark Mode theme persistence & toggle
 const themeToggle = document.getElementById("theme-toggle");
 function initTheme() {
@@ -526,6 +624,7 @@ if (themeToggle) {
   };
 }
 initTheme();
+applyLanguage(currentLang);
 
 // The proxy returns { parts: [{kind:"text",text} | {kind:"a2ui",data}] }.
 form.addEventListener("submit", async (ev) => {
@@ -537,7 +636,11 @@ form.addEventListener("submit", async (ev) => {
   const b = bubble("agent");
   b.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
   try {
-    const res = await fetch("/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: text }) });
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, language: currentLang })
+    });
     // Read as text first, then parse. If the proxy ever returns a non-JSON error
     // page (e.g. a plain "Internal Server Error"), show that body instead of a
     // cryptic "Unexpected token" JSON error.

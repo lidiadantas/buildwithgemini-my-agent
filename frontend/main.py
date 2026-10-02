@@ -214,8 +214,11 @@ def _extract_parts(parts: list) -> list[dict]:
 async def chat(req: Request):
     body = await req.json()
     message = body.get("message", "")
+    language = body.get("language", "en")
     user_id = body.get("user_id") or "web-user"
     parts: list[dict] = []
+
+    full_message = f"[Language: {language}]\n{message}" if language in ("pt-BR", "pt") and not message.startswith("[Language:") else message
 
     async with httpx.AsyncClient(headers=_auth_headers(), timeout=120) as client:
         card = await _get_card(client)
@@ -233,7 +236,7 @@ async def chat(req: Request):
         msg = Message(
             message_id=str(uuid.uuid4()),
             role=Role.user,
-            parts=[Part(root=TextPart(text=message))],
+            parts=[Part(root=TextPart(text=full_message))],
             context_id=_contexts.get(user_id),
         )
 
